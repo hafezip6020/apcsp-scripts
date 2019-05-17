@@ -10,16 +10,19 @@ for i in ${IP%.*}.{1..255}; do
 	if [ $? -eq 0 ]; then
 		echo $i "alive"
 
-		nc -zv -w1 $i 22
+		nc -zv -w1 $i 22 > /dev/null 2>&1
 		if [ $? -eq 0 ]; then
 			echo "SSH port 22 is open"
 		fi
 
-		nc -zv -w1 $i 80
+		nc -zv -w1 $i 80 > /dev/null 2>&1
 		if [ $? -eq 0 ]; then
 			echo "HTTP port 80 is open"
-		fi 
+		fi
 
+		grep $i /proc/net/arp | awk '{print $4}'  
+		#awk ´{print $3}´ grep $i /proc/net/arp
+		host $i | awk '{print $5}'
 	#else
 	#echo $i "dead"
 	fi
